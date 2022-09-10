@@ -21,7 +21,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/pfaaj/docker-runcheck">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="320" height="320">
   </a>
 
   <h3 align="center">Docker run checker</h3>
@@ -29,7 +29,7 @@
   <p align="center">
     Check available binaries in the used images before running an expensive and long docker build.
     <br />
-    <a href="https://github.com/github.com/pfaaj/docker-runcheck"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/pfaaj/docker-runcheck"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     ·
