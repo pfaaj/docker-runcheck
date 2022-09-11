@@ -52,9 +52,10 @@ class RunChecker:
         if cmd.value[0] not in RunChecker.ignore:
             images = self.client.images.list(cmd.value[0])
             for image in images:
-                print(f"{image} is available.")
+                print(f"{image} {cmd.value[0]} is available.")
             if not images:
-                print(f"Pull image: {cmd.value[0]}")
+                print(f"Pulling image: {cmd.value[0]}...")
+                self.client.images.pull(cmd.value[0])
             container = self.client.containers.create(cmd.value[0])
             print("Created container")
 
