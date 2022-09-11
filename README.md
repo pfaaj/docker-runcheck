@@ -24,7 +24,7 @@
     <img src="images/logo.png" alt="Logo" width="320" height="320">
   </a>
 
-  <h3 align="center">Docker run checker</h3>
+  <h3 align="center">Docker runcheck</h3>
 
   <p align="center">
     Check available binaries in the used images before running an expensive and long docker build.
@@ -125,7 +125,7 @@ See the [open issues](https://github.com/pfaaj/docker-runcheck/issues) for a ful
 
 
 
-<!-- CONTRIBUTING -->
+<!-- CONTRIBUTING 
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -140,7 +140,7 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+-->
 
 
 <!-- LICENSE -->
