@@ -10,8 +10,6 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
@@ -95,13 +93,9 @@ We need the docker sdk and the dockerfile library
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+### Usage
 
-
-### Running docker-runcheck
-
-Below is an example of how you can run docker-runcheck. 
-
+You can run docker-runcheck with:
 
   ```sh
   python docker-runcheck.py
@@ -163,12 +157,12 @@ Project Link: [https://github.com/pfaaj/docker-runcheck/](https://github.com/pfa
 
 
 
-<!-- ACKNOWLEDGMENTS -->
+<!-- ACKNOWLEDGMENTS 
 ## Acknowledgments
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+-->
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
