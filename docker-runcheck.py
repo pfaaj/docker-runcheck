@@ -29,6 +29,7 @@ def generator_to_stream(generator, buffer_size=io.DEFAULT_BUFFER_SIZE):
 class RunChecker:
 
     ignore = []
+
     def __init__(self):
         self.client = docker.from_env()
         self.commands = dockerfile.parse_file(os.getcwd() + "/Dockerfile")
@@ -49,7 +50,11 @@ class RunChecker:
 
     def list_available_binaries(self, cmd):
         if cmd.value[0] not in RunChecker.ignore:
-            print(f"Pull image: {cmd.value[0]}")
+            images = self.client.images.list(cmd.value[0])
+            for image in images:
+                print(f"{image} is available.")
+            if not images:
+                print(f"Pull image: {cmd.value[0]}")
             container = self.client.containers.create(cmd.value[0])
             print("Created container")
 
