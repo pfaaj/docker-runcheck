@@ -1,8 +1,11 @@
+from typing import List
 import docker
 import dockerfile
 import os
 import tarfile
 import io
+
+# commands between EOFS are not being properly parsed
 
 # https://stackoverflow.com/questions/39155958/how-do-i-read-a-tarfile-from-a-generator
 def generator_to_stream(generator, buffer_size=io.DEFAULT_BUFFER_SIZE):
@@ -33,12 +36,24 @@ class RunChecker:
     def __init__(self):
         self.client = docker.from_env()
         self.commands = dockerfile.parse_file(os.getcwd() + "/Dockerfile")
+        self.required_binaries = []
 
     def run(self):
         self.parse_dockerfile()
 
+    def get_required_binaries(self, cmd) -> List[str]:
+        # print(cmd)
+        commands = []
+        for command in cmd.value:
+            commands = [c.strip() for c in commands + command.split("&&")]
+        command_names = [c.split(" ")[0] for c in commands]
+        # print(command_names)
+        return command_names
+
     def parse_dockerfile(self):
         for cmd in self.commands:
+            if cmd.cmd == "RUN":
+                self.required_binaries += self.get_required_binaries(cmd)
             if cmd.cmd == "FROM":
                 print(f"FROM: {cmd.value}")
                 if type(cmd.value) is tuple:
@@ -47,16 +62,21 @@ class RunChecker:
                             if i + 1 < len(cmd.value):
                                 RunChecker.ignore.append(cmd.value[i + 1])
                 self.list_available_binaries(cmd)
+                print(f"Required binaries {self.required_binaries}")
 
     def list_available_binaries(self, cmd):
         if cmd.value[0] not in RunChecker.ignore:
             images = self.client.images.list(cmd.value[0])
             for image in images:
                 print(f"{image} {cmd.value[0]} is available.")
-            if not images:
+            container = None
+            try:
+                container = self.client.containers.create(cmd.value[0])
+            except docker.errors.ImageNotFound:
                 print(f"Pulling image: {cmd.value[0]}...")
                 self.client.images.pull(cmd.value[0])
-            container = self.client.containers.create(cmd.value[0])
+                container = self.client.containers.create(cmd.value[0])
+
             print("Created container")
 
             exported = container.export()
@@ -65,7 +85,7 @@ class RunChecker:
 
             # print(f"Container contents {tar_file.getnames()}")
             bin_apps = [p for p in tar_file.getnames() if "bin" in p]
-            print(f"/usr/bin: {bin_apps}")
+            print(f"Available binaries: {bin_apps}")
 
 
 if __name__ == "__main__":

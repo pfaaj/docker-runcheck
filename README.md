@@ -19,7 +19,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/pfaaj/docker-runcheck">
-    <img src="images/logo.png" alt="Logo" width="320" height="320">
+    <img src="images/logo.png" alt="Logo" width="400" height="400">
   </a>
 
   <h3 align="center">Docker runcheck</h3>
@@ -118,6 +118,19 @@ See the [open issues](https://github.com/pfaaj/docker-runcheck/issues) for a ful
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+<!-- For apt stuff, package info
+
+git clone https://salsa.debian.org/apt-team/python-apt
+cd python-apt
+sudo apt install libapt-pkg-dev
+python setup.py build
+
+or alternatively https://help.launchpad.net/API/launchpadlib
+
+or https://sources.debian.org/doc/api/ -> examples 
+https://sources.debian.org/api/info/package/davfs2/1.5.2-1/ 
+https://sources.debian.org/api/src/cowsay/3.03+dfsg1-4/cows/
+-->
 
 <!-- CONTRIBUTING 
 ## Contributing
