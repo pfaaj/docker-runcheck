@@ -12,14 +12,38 @@ from rich.table import Table
 import shutil
 
 
-def print_table(missing):
+class Binary:
+    def __init__(self, name, status):
+        self.name = name
+        self.status = status
+
+
+def get_binaries(required_binaries, available_binaries):
+    binaries = []
+    for bin in required_binaries:
+        b = Binary(bin, "missing")
+        for available_bin in available_binaries:
+            if bin in available_bin:
+                b = Binary(bin, "present")
+        binaries.append(b)
+    return binaries
+
+
+def print_table(binaries):
 
     table = Table(title="Missing binaries")
-    table.add_column("Binary", justify="right", style="red", no_wrap=True)
-    table.add_column("Possible solution", justify="right", style="green")
+    table.add_column("Binary", justify="right", no_wrap=True)
+    table.add_column("Status", justify="right")
 
-    for binary in missing:
-        table.add_row(binary, "sudo apt install " + binary)
+    for binary in binaries:
+        table.add_row(
+            "[green]" + binary.name
+            if binary.status == "present"
+            else "[red]" + binary.name,
+            "[green]" + binary.status
+            if binary.status == "present"
+            else "[red]" + binary.status,
+        )
 
     console = Console()
     console.print(table)
@@ -78,10 +102,16 @@ class RunChecker:
         self.preprocess_dockerfile(os.getcwd() + "/.Dockerfile")
         self.commands = dockerfile.parse_file(os.getcwd() + "/.Dockerfile")
         self.required_binaries = []
+        self.available_binaries = []
 
     def run(self):
         self.parse_dockerfile()
-        print_table(self.required_binaries)
+        print_table(
+            get_binaries(
+                required_binaries=self.required_binaries,
+                available_binaries=self.available_binaries,
+            )
+        )
 
     def get_required_binaries(self, cmd) -> List[str]:
         # print(cmd)
@@ -128,7 +158,7 @@ class RunChecker:
             tar_file = tarfile.open(fileobj=stream, mode="r|*")
 
             # print(f"Container contents {tar_file.getnames()}")
-            bin_apps = [p for p in tar_file.getnames() if "bin" in p]
+            self.available_binaries += [p for p in tar_file.getnames() if "bin" in p]
             # print(f"Available binaries: {bin_apps}")
 
 

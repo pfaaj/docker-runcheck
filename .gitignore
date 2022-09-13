@@ -2,3 +2,4 @@ tempCodeRunnerFile.py
 .vscode/
 __pycache__/
 .Dockerfile
+view.py
