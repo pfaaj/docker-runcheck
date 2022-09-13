@@ -34,7 +34,7 @@ def print_table(binaries):
     table = Table(title="Missing binaries")
     table.add_column("Binary", justify="right", no_wrap=True)
     table.add_column("Status", justify="right")
-
+    binaries.sort(key=lambda b: b.status)
     for binary in binaries:
         table.add_row(
             "[green]" + binary.name
