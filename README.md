@@ -101,6 +101,7 @@ You can run docker-runcheck with:
   python docker-runcheck.py
   ```
 
+![](images/runcheck.gif)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
