@@ -1,6 +1,3 @@
-import fileinput
-from importlib.resources import path
-import sys
 from typing import List
 import docker
 import dockerfile
