@@ -101,11 +101,6 @@ You can run docker-runcheck with:
   python docker-runcheck.py
   ```
 
-<div align="center">
-  <a href="https://github.com/pfaaj/docker-runcheck">
-    <img src="images/runcheck.gif" alt="Logo" width="400" height="400">
-  </a>
-</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
