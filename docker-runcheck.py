@@ -1,9 +1,29 @@
+import fileinput
+from importlib.resources import path
+import sys
 from typing import List
 import docker
 import dockerfile
 import os
 import tarfile
 import io
+from rich.console import Console
+from rich.table import Table
+import shutil
+
+
+def print_table(missing):
+
+    table = Table(title="Missing binaries")
+    table.add_column("Binary", justify="right", style="red", no_wrap=True)
+    table.add_column("Possible solution", justify="right", style="green")
+
+    for binary in missing:
+        table.add_row(binary, "sudo apt install " + binary)
+
+    console = Console()
+    console.print(table)
+
 
 # commands between EOFS are not being properly parsed
 
@@ -33,18 +53,41 @@ class RunChecker:
 
     ignore = []
 
+    def preprocess_dockerfile(self, path_dockerfile):
+        data = []
+        with open(path_dockerfile, "r") as file:
+            data = file.readlines()
+            in_eof_block = False
+            for i, line in enumerate(data):
+                if in_eof_block:
+                    data[i] = "RUN " + line
+                if "<<EOF" in line:
+                    print("found EOF")
+                    data[i] = ""
+                    in_eof_block = True
+                elif "EOF" in line:
+                    data[i] = ""
+                    in_eof_block = False
+        with open(path_dockerfile, "w") as file:
+            file.writelines(data)
+
     def __init__(self):
         self.client = docker.from_env()
-        self.commands = dockerfile.parse_file(os.getcwd() + "/Dockerfile")
+        self.path_dockerfile = os.getcwd() + "/Dockerfile"
+        shutil.copy(self.path_dockerfile, os.getcwd() + "/.Dockerfile")
+        self.preprocess_dockerfile(os.getcwd() + "/.Dockerfile")
+        self.commands = dockerfile.parse_file(os.getcwd() + "/.Dockerfile")
         self.required_binaries = []
 
     def run(self):
         self.parse_dockerfile()
+        print_table(self.required_binaries)
 
     def get_required_binaries(self, cmd) -> List[str]:
         # print(cmd)
         commands = []
         for command in cmd.value:
+            print(cmd)
             commands = [c.strip() for c in commands + command.split("&&")]
         command_names = [c.split(" ")[0] for c in commands]
         # print(command_names)
@@ -63,6 +106,7 @@ class RunChecker:
                                 RunChecker.ignore.append(cmd.value[i + 1])
                 self.list_available_binaries(cmd)
                 print(f"Required binaries {self.required_binaries}")
+                # just for testing the table print, we need available - required
 
     def list_available_binaries(self, cmd):
         if cmd.value[0] not in RunChecker.ignore:
@@ -85,7 +129,7 @@ class RunChecker:
 
             # print(f"Container contents {tar_file.getnames()}")
             bin_apps = [p for p in tar_file.getnames() if "bin" in p]
-            print(f"Available binaries: {bin_apps}")
+            # print(f"Available binaries: {bin_apps}")
 
 
 if __name__ == "__main__":
