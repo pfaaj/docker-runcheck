@@ -28,14 +28,16 @@ def get_binaries(required_binaries, available_binaries, installed_binaries):
     binaries = []
     for bin in required_binaries:
         b = Binary(bin, "missing")
-        for available_bin in available_binaries:
-            if bin in available_bin:
-                b = Binary(bin, "present")
-        binaries.append(b)
+
         for available_bin in installed_binaries:
             if bin == available_bin:
                 b = Binary(bin, "installed")
+        for available_bin in available_binaries:
+            if bin in available_bin:
+                b = Binary(bin, "present")
+
         binaries.append(b)
+    print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
     return binaries
 
 
