@@ -160,7 +160,7 @@ class RunChecker:
                 if in_eof_block:
                     data[i] = "RUN " + line
                 if "<<EOF" in line:
-                    print("found EOF")
+                    # print("found EOF")
                     data[i] = ""
                     in_eof_block = True
                 elif "EOF" in line:
@@ -218,7 +218,7 @@ class RunChecker:
                 self.required_binaries += self.get_required_binaries(cmd)
                 self.update_installed_binaries(cmd)
             if cmd.cmd == "FROM":
-                print(f"FROM: {cmd.value}")
+                # print(f"FROM: {cmd.value}")
                 if type(cmd.value) is tuple:
                     for i, v in enumerate(cmd.value):
                         if v.casefold() == "as":
@@ -245,7 +245,7 @@ class RunChecker:
                 self.client.images.pull(cmd.value[0])
                 container = self.client.containers.create(cmd.value[0])
 
-            print("Created container")
+            print("Created container. Analzing contents...")
 
             exported = container.export()
             stream = generator_to_stream(exported)
