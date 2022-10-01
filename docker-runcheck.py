@@ -15,6 +15,18 @@ class Binary:
         self.name = name
         self.status = status
 
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Binary):
+            return self.name == other.name and self.status == other.status
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(("name", self.name, "status", self.status))
+
 
 class PackageManager:
     def __init__(self, name: str, install_cmd: str, upgrade_cmd: str, update_cmd: str):
@@ -30,7 +42,8 @@ def print_table(binaries):
     table.add_column("Binary", justify="right", no_wrap=True)
     table.add_column("Status", justify="right")
     binaries.sort(key=lambda b: b.status)
-    print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
+    # need to remove duplicates of binary
+    print(f"Binaries: {[(b.name, b.status) for b in  set(binaries)]}")
     for binary in set(binaries):
         table.add_row(
             "[green]" + binary.name
@@ -136,7 +149,6 @@ class RunChecker:
                         b = Binary(bin, "present")
 
             binaries.append(b)
-        print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
         return binaries
 
     def preprocess_dockerfile(self, path_dockerfile):
