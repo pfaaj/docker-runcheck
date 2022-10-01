@@ -24,23 +24,6 @@ class PackageManager:
         self.update_cmd = update_cmd
 
 
-def get_binaries(required_binaries, available_binaries, installed_binaries):
-    binaries = []
-    for bin in required_binaries:
-        b = Binary(bin, "missing")
-
-        for available_bin in installed_binaries:
-            if bin == available_bin:
-                b = Binary(bin, "installed")
-        for available_bin in available_binaries:
-            if bin in available_bin:
-                b = Binary(bin, "present")
-
-        binaries.append(b)
-    print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
-    return binaries
-
-
 def print_table(binaries):
 
     table = Table(title="Binaries")
@@ -53,7 +36,7 @@ def print_table(binaries):
             "[green]" + binary.name
             if binary.status == "present"
             else "[yellow]" + binary.name
-            if binary.status == "installed"
+            if binary.status == "installed" or binary.status == "used before install"
             else "[red]" + binary.name,
             "[green]" + binary.status
             if binary.status == "present"
@@ -138,6 +121,24 @@ class RunChecker:
         ),
     ]
 
+    def get_binaries(self):
+        binaries = []
+        for bin in self.required_binaries:
+            b = Binary(bin, "missing")
+
+            if bin in self.used_before_install:
+                b = Binary(bin, "used before install")
+            elif bin in [binary["name"] for binary in self.installed_binaries]:
+                b = Binary(bin, "installed")
+            else:
+                for available_bin in self.available_binaries:
+                    if bin in available_bin:
+                        b = Binary(bin, "present")
+
+            binaries.append(b)
+        print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
+        return binaries
+
     def preprocess_dockerfile(self, path_dockerfile):
         data = []
         with open(path_dockerfile, "r") as file:
@@ -164,28 +165,20 @@ class RunChecker:
         self.commands = dockerfile.parse_file(os.getcwd() + "/.Dockerfile")
         self.required_binaries = []
         self.available_binaries = []
-        self.installed_binaries = set()
+        self.used_before_install = []
+        self.installed_binaries = []
 
     def run(self):
         self.parse_dockerfile()
-        print_table(
-            get_binaries(
-                required_binaries=self.required_binaries,
-                available_binaries=self.available_binaries,
-                installed_binaries=self.installed_binaries,
-            )
-        )
+        print_table(self.get_binaries())
 
-    def get_required_binaries(self, cmd) -> List[str]:
-        # print(cmd)
+    def update_installed_binaries(self, cmd):
         commands = []
         for command in cmd.value:
             print(cmd)
             commands = [c.strip() for c in commands + command.split("&&")]
-        command_names = [c.split(" ")[0] for c in commands]
-        ### check whether binary is installed by a package manager
-        for cmd in commands:
-            cmd_parts = cmd.split(" ")
+        for idx, command in enumerate(commands):
+            cmd_parts = command.split(" ")
             pkg_manager_with_cmd = list(
                 filter(lambda p: p.name == cmd_parts[0], RunChecker.package_managers)
             )
@@ -194,7 +187,17 @@ class RunChecker:
                     if cmd_parts[1] == pkg_manager_with_cmd[0].install_cmd:
                         # we found a install command
                         if len(cmd_parts) > 2:
-                            self.installed_binaries.add(cmd_parts[2])
+                            self.installed_binaries.append(
+                                {"name": cmd_parts[2], "command": cmd}
+                            )
+
+    def get_required_binaries(self, cmd) -> List[str]:
+        # print(cmd)
+        commands = []
+        for command in cmd.value:
+            print(cmd)
+            commands = [c.strip() for c in commands + command.split("&&")]
+        command_names = [c.split(" ")[0] for c in commands]
 
         # print(command_names)
         return command_names
@@ -203,6 +206,7 @@ class RunChecker:
         for cmd in self.commands:
             if cmd.cmd == "RUN":
                 self.required_binaries += self.get_required_binaries(cmd)
+                self.update_installed_binaries(cmd)
             if cmd.cmd == "FROM":
                 print(f"FROM: {cmd.value}")
                 if type(cmd.value) is tuple:
@@ -213,6 +217,11 @@ class RunChecker:
                 self.list_available_binaries(cmd)
                 print(f"Required binaries {self.required_binaries}")
                 # just for testing the table print, we need available - required
+        for installed in self.installed_binaries:
+            for cmd in self.commands:
+                if cmd.value[0].split(" ")[0] == installed["name"]:
+                    if installed["command"].start_line > cmd.start_line:
+                        self.used_before_install.append(cmd.value[0].split(" ")[0])
 
     def list_available_binaries(self, cmd):
         if cmd.value[0] not in RunChecker.ignore:

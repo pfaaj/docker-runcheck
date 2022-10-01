@@ -12,6 +12,7 @@ CMD ["manage.py", "runserver", "0.0.0.0:8000"]
 FROM builder as dev-envs
 RUN <<EOF
 apk update
+git status
 apk add git
 git clone some_address
 xyz this
