@@ -13,6 +13,7 @@ FROM builder as dev-envs
 RUN <<EOF
 apk update
 apk add git
+git clone some_address
 xyz this
 this_super_nice_command is_missing
 EOF

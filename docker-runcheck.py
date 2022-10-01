@@ -1,3 +1,4 @@
+from gettext import install
 from typing import List
 import docker
 import dockerfile
@@ -15,7 +16,15 @@ class Binary:
         self.status = status
 
 
-def get_binaries(required_binaries, available_binaries):
+class PackageManager:
+    def __init__(self, name: str, install_cmd: str, upgrade_cmd: str, update_cmd: str):
+        self.name = name
+        self.install_cmd = install_cmd
+        self.upgrade_cmd = upgrade_cmd
+        self.update_cmd = update_cmd
+
+
+def get_binaries(required_binaries, available_binaries, installed_binaries):
     binaries = []
     for bin in required_binaries:
         b = Binary(bin, "missing")
@@ -23,22 +32,31 @@ def get_binaries(required_binaries, available_binaries):
             if bin in available_bin:
                 b = Binary(bin, "present")
         binaries.append(b)
+        for available_bin in installed_binaries:
+            if bin == available_bin:
+                b = Binary(bin, "installed")
+        binaries.append(b)
     return binaries
 
 
 def print_table(binaries):
 
-    table = Table(title="Missing binaries")
+    table = Table(title="Binaries")
     table.add_column("Binary", justify="right", no_wrap=True)
     table.add_column("Status", justify="right")
     binaries.sort(key=lambda b: b.status)
-    for binary in binaries:
+    print(f"Binaries: {[(b.name, b.status) for b in set(binaries)]}")
+    for binary in set(binaries):
         table.add_row(
             "[green]" + binary.name
             if binary.status == "present"
+            else "[yellow]" + binary.name
+            if binary.status == "installed"
             else "[red]" + binary.name,
             "[green]" + binary.status
             if binary.status == "present"
+            else "[yellow]" + binary.status
+            if binary.status == "installed"
             else "[red]" + binary.status,
         )
 
@@ -74,6 +92,50 @@ class RunChecker:
 
     ignore = []
 
+    # if we find a package manager we want to get a list
+    # of the installed binaries, so we might as well ignore
+    # all other command that are not the install command
+    # probably do not need the update and upgrade command
+    # just as well list, search or remove commands
+    # if name of the package does not contain name of binary package
+    # maybe we can have an offline list of the most common super packages
+    # apk add build-base aka apt install build-essential
+    # aka sudo pacman -Sy base-devel or dnf install @development-tools
+    # for debian packages we might just use the api
+    # get auf https://sources.debian.org/api/src/package-name
+    # get one of the versions if not already provide with install cmd
+    # in versions -> for obj in objs: obj["version"]
+    # get auf https://sources.debian.org/api/src/cowsay/3.03+dfsg2-8/
+    package_managers = [
+        PackageManager(
+            name="apt",
+            install_cmd="install",
+            upgrade_cmd="upgrade",
+            update_cmd="update",
+        ),
+        PackageManager(
+            name="apt-get",
+            install_cmd="install",
+            upgrade_cmd="upgrade",
+            update_cmd="update",
+        ),
+        PackageManager(
+            name="apk", install_cmd="add", upgrade_cmd="upgrade", update_cmd="update"
+        ),
+        PackageManager(
+            name="dnf",
+            install_cmd="install",
+            upgrade_cmd="upgrade",
+            update_cmd="check-update",
+        ),
+        PackageManager(
+            name="pacman",
+            install_cmd="-S",
+            upgrade_cmd="-Syu",
+            update_cmd="-Syy",
+        ),
+    ]
+
     def preprocess_dockerfile(self, path_dockerfile):
         data = []
         with open(path_dockerfile, "r") as file:
@@ -100,6 +162,7 @@ class RunChecker:
         self.commands = dockerfile.parse_file(os.getcwd() + "/.Dockerfile")
         self.required_binaries = []
         self.available_binaries = []
+        self.installed_binaries = set()
 
     def run(self):
         self.parse_dockerfile()
@@ -107,6 +170,7 @@ class RunChecker:
             get_binaries(
                 required_binaries=self.required_binaries,
                 available_binaries=self.available_binaries,
+                installed_binaries=self.installed_binaries,
             )
         )
 
@@ -117,6 +181,19 @@ class RunChecker:
             print(cmd)
             commands = [c.strip() for c in commands + command.split("&&")]
         command_names = [c.split(" ")[0] for c in commands]
+        ### check whether binary is installed by a package manager
+        for cmd in commands:
+            cmd_parts = cmd.split(" ")
+            pkg_manager_with_cmd = list(
+                filter(lambda p: p.name == cmd_parts[0], RunChecker.package_managers)
+            )
+            if pkg_manager_with_cmd:
+                if len(cmd_parts) > 1:
+                    if cmd_parts[1] == pkg_manager_with_cmd[0].install_cmd:
+                        # we found a install command
+                        if len(cmd_parts) > 2:
+                            self.installed_binaries.add(cmd_parts[2])
+
         # print(command_names)
         return command_names
 
