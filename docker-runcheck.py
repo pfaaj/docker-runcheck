@@ -38,12 +38,12 @@ class PackageManager:
 
 def print_table(binaries):
 
-    table = Table(title="Binaries")
+    table = Table(title="")
     table.add_column("Binary", justify="right", no_wrap=True)
     table.add_column("Status", justify="right")
     binaries.sort(key=lambda b: b.status)
     # need to remove duplicates of binary
-    print(f"Binaries: {[(b.name, b.status) for b in  set(binaries)]}")
+    # print(f"Binaries: {[(b.name, b.status) for b in  set(binaries)]}")
     for binary in set(binaries):
         table.add_row(
             "[green]" + binary.name
@@ -187,7 +187,7 @@ class RunChecker:
     def update_installed_binaries(self, cmd):
         commands = []
         for command in cmd.value:
-            print(cmd)
+            # print(cmd)
             commands = [c.strip() for c in commands + command.split("&&")]
         for idx, command in enumerate(commands):
             cmd_parts = command.split(" ")
@@ -204,14 +204,12 @@ class RunChecker:
                             )
 
     def get_required_binaries(self, cmd) -> List[str]:
-        # print(cmd)
         commands = []
         for command in cmd.value:
-            print(cmd)
+            # print(cmd)
             commands = [c.strip() for c in commands + command.split("&&")]
         command_names = [c.split(" ")[0] for c in commands]
 
-        # print(command_names)
         return command_names
 
     def parse_dockerfile(self):
@@ -227,7 +225,6 @@ class RunChecker:
                             if i + 1 < len(cmd.value):
                                 RunChecker.ignore.append(cmd.value[i + 1])
                 self.list_available_binaries(cmd)
-                print(f"Required binaries {self.required_binaries}")
                 # just for testing the table print, we need available - required
         for installed in self.installed_binaries:
             for cmd in self.commands:
