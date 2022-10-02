@@ -256,6 +256,8 @@ class RunChecker:
             # print(f"Available binaries: {bin_apps}")
 
 
-if __name__ == "__main__":
+def run():
     run_checker = RunChecker()
     run_checker.run()
+if __name__ == "__main__":
+    run()
