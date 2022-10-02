@@ -70,7 +70,7 @@
   + export image as tar file and compile a list of the available binaries in the image
   + compile a list of any binaries mentioned in a RUN command that are  missing from the image or are used before being installed by a package manager.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+</br>
 
 
 <!-- GETTING STARTED -->
