@@ -90,20 +90,15 @@ class RunChecker:
 
     ignore = []
 
-    # if we find a package manager we want to get a list
-    # of the installed binaries, so we might as well ignore
-    # all other command that are not the install command
-    # probably do not need the update and upgrade command
-    # just as well list, search or remove commands
     # if name of the package does not contain name of binary package
     # maybe we can have an offline list of the most common super packages
     # apk add build-base aka apt install build-essential
     # aka sudo pacman -Sy base-devel or dnf install @development-tools
     # for debian packages we might just use the api
-    # get auf https://sources.debian.org/api/src/package-name
+    # get https://sources.debian.org/api/src/package-name
     # get one of the versions if not already provide with install cmd
     # in versions -> for obj in objs: obj["version"]
-    # get auf https://sources.debian.org/api/src/cowsay/3.03+dfsg2-8/
+    # get https://sources.debian.org/api/src/cowsay/3.03+dfsg2-8/
     package_managers = [
         PackageManager(
             name="apt",
@@ -259,5 +254,7 @@ class RunChecker:
 def run():
     run_checker = RunChecker()
     run_checker.run()
+
+
 if __name__ == "__main__":
     run()
