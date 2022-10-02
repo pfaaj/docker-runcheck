@@ -10,8 +10,8 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+<!--[![Issues][issues-shield]][issues-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]-->
 
 
 
@@ -26,9 +26,6 @@
 
   <p align="center">
     Check available binaries in the used images before running an expensive and long docker build.
-    <br />
-    <a href="https://github.com/pfaaj/docker-runcheck"><strong>Explore the docs »</strong></a>
-    <br />
     <br />
     ·
     <a href="https://github.com/pfaaj/docker-runcheck/issues">Report Bug</a>
@@ -45,16 +42,9 @@
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -162,8 +152,6 @@ Distributed under the MIT License.
 ## Contact
 
 Paulo Aragao - paulo.aragao.dev@gmail.com
-
-Project Link: [https://github.com/pfaaj/docker-runcheck/](https://github.com/pfaaj/docker-runcheck)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
