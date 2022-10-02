@@ -82,8 +82,6 @@ pip install docker_runcheck
 ```
 
 
-</br>
-
 
 <!-- USAGE EXAMPLES -->
 
