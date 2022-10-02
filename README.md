@@ -72,7 +72,9 @@
 
 + Run docker-runcheck to validate your Dockerfile before attempting time-intensive docker builds. 
 
-+ docker-runcheck contructs one or more containers (based on the mentioned images), without running any of them. We list the available binaries and if any run commands are detected that are not supported by the available binaries, an error will be returned.
++ docker-runcheck works as follows:
+  + contructs one or more containers (based on the mentioned images, image is downloaded if not present), without having to build the image described in the Dockerfile.
+  + compile a list of the available binaries in the image and of any binaries mentioned in a RUN command that are  missing from the image or are used before being installed by a package manager.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -111,14 +113,10 @@ You can run docker-runcheck with:
 <!-- ROADMAP -->
 ## Roadmap
 
-- [] List all available binaries
-- [] List all mentioned binaries
-- [] Check whether mentioned binaries are available
+- [] Detect binary is installed by super package (e.g. build-essential)
 
 
 See the [open issues](https://github.com/pfaaj/docker-runcheck/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- For apt stuff, package info
@@ -158,7 +156,6 @@ Don't forget to give the project a star! Thanks again!
 
 Distributed under the MIT License. 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
