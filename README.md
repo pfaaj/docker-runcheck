@@ -25,7 +25,7 @@
   <h3 align="center">Docker runcheck</h3>
 
   <p align="center">
-    Check available binaries in the used images before running an expensive and long docker build.
+    Check wheter required binaries are available in the used docker image without having to first run an expensive and long docker build.
     <br />
     ·
     <a href="https://github.com/pfaaj/docker-runcheck/issues">Report Bug</a>
@@ -63,8 +63,11 @@
 + Run docker-runcheck to validate your Dockerfile before attempting time-intensive docker builds. 
 
 + docker-runcheck works as follows:
-  + contructs one or more containers (based on the mentioned images, image is downloaded if not present), without having to build the image described in the Dockerfile.
-  + compile a list of the available binaries in the image and of any binaries mentioned in a RUN command that are  missing from the image or are used before being installed by a package manager.
+  + contructs one or more containers based on the mentioned image
+  + docker image is downloaded if not present
+  but it is not built.
+  + export image as tar file and compile a list of the available binaries in the image
+  + compile a list of any binaries mentioned in a RUN command that are  missing from the image or are used before being installed by a package manager.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,7 +129,7 @@ https://sources.debian.org/api/src/cowsay/3.03+dfsg1-4/cows/
 
 Contributions are **greatly appreciated**.
 
-If you have a suggestion to make this project better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+If you have a suggestion to make this project better, please fork the repo and create a pull request. 
 Don't forget to give the project a star! Thanks!
 
 1. Fork the Project
