@@ -63,6 +63,7 @@
 + Run docker-runcheck to validate your Dockerfile before attempting time-intensive docker builds. 
 
 + docker-runcheck works as follows:
+  + looks for a file name Dockerfile in the current working directory
   + contructs one or more containers based on the mentioned image
   + docker image is downloaded if not present
   but it is not built.
