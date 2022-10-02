@@ -76,11 +76,9 @@
 ## Getting Started
 
 
-We need the docker sdk and the dockerfile library
- 
-  ```sh
-  pip install -r requirements.txt 
-  ```
+```
+pip install docker_runcheck
+```
 
 
 </br>
@@ -88,10 +86,6 @@ We need the docker sdk and the dockerfile library
 
 <!-- USAGE EXAMPLES -->
 
-### Installation
-```
-pip install docker_runcheck
-```
 ### Usage
 
 You can then run docker-runcheck with:

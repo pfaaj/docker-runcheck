@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "docker_runcheck"
-version = "0.1.5"
+version = "0.1.6"
 description = "An application to parse Dockerfiles and determine whether all called binaries are able to run (are either present in the base image or are installed by a package manager)"
 authors = ["Paulo Aragao <paulo.aragao.dev@gmail.com>"]
 license = "MIT License"
