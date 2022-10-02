@@ -19,7 +19,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/pfaaj/docker-runcheck">
-    <img src="images/logo.png" alt="Logo" width="400" height="400">
+    <img src="images/logo.png" alt="Logo" width="300" height="300">
   </a>
 
   <h3 align="center">Docker runcheck</h3>
@@ -87,12 +87,17 @@ We need the docker sdk and the dockerfile library
 
 
 <!-- USAGE EXAMPLES -->
+
+### Installation
+```
+pip install docker_runcheck
+```
 ### Usage
 
-You can run docker-runcheck with:
+You can then run docker-runcheck with:
 
   ```sh
-  python docker-runcheck.py
+  python -m docker_runcheck
   ```
 
 ![](images/runcheck.gif)
