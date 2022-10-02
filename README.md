@@ -105,7 +105,6 @@ You can run docker-runcheck with:
 
 ![](images/runcheck.gif)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -116,7 +115,7 @@ You can run docker-runcheck with:
 - [] Detect binary is installed by super package (e.g. build-essential)
 
 
-See the [open issues](https://github.com/pfaaj/docker-runcheck/issues) for a full list of proposed features (and known issues).
+<!--See the [open issues](https://github.com/pfaaj/docker-runcheck/issues) for a full list of proposed features (and known issues).-->
 
 
 <!-- For apt stuff, package info
