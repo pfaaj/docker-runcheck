@@ -8,6 +8,9 @@ import io
 from rich.console import Console
 from rich.table import Table
 import shutil
+import typer 
+
+app = typer.Typer()
 
 
 class Binary:
@@ -146,7 +149,7 @@ class RunChecker:
             binaries.append(b)
         return binaries
 
-    def preprocess_dockerfile(self, path_dockerfile):
+    def preprocess_dockerfile(self, path_dockerfile : str):
         data = []
         with open(path_dockerfile, "r") as file:
             data = file.readlines()
@@ -164,12 +167,11 @@ class RunChecker:
         with open(path_dockerfile, "w") as file:
             file.writelines(data)
 
-    def __init__(self):
+    def __init__(self, path_dockerfile="./Dockerfile"):
         self.client = docker.from_env()
-        self.path_dockerfile = os.getcwd() + "/Dockerfile"
-        shutil.copy(self.path_dockerfile, os.getcwd() + "/.Dockerfile")
-        self.preprocess_dockerfile(os.getcwd() + "/.Dockerfile")
-        self.commands = dockerfile.parse_file(os.getcwd() + "/.Dockerfile")
+        self.path_dockerfile = path_dockerfile
+        self.preprocess_dockerfile(path_dockerfile)
+        self.commands = dockerfile.parse_file(path_dockerfile)
         self.required_binaries = []
         self.available_binaries = []
         self.used_before_install = []
@@ -240,7 +242,7 @@ class RunChecker:
                 self.client.images.pull(cmd.value[0])
                 container = self.client.containers.create(cmd.value[0])
 
-            print("Created container. Analzing contents...")
+            print("Created container. Analyzing contents...")
 
             exported = container.export()
             stream = generator_to_stream(exported)
@@ -251,10 +253,35 @@ class RunChecker:
             # print(f"Available binaries: {bin_apps}")
 
 
-def run():
-    run_checker = RunChecker()
+@app.command()
+def main(file: str = typer.Option("./Dockerfile", "-f", "--file", help="Path to the Dockerfile")):
+    """
+
+    Docker RunCheck 
+
+
+
+    This tool analyzes Dockerfiles to determine the presence and availability of various binaries.
+
+    It helps in identifying which binaries are required, installed, or missing in the Docker image.
+
+
+
+    Usage:
+
+        docker_runcheck
+
+
+
+    Options:
+
+        -h, --help      Show this message and exit.
+        -f FILE, --file FILE  Path to the Dockerfile. Default is ./Dockerfile.
+
+    """
+    run_checker = RunChecker(path_dockerfile=file)
     run_checker.run()
 
 
 if __name__ == "__main__":
-    run()
+    app()
