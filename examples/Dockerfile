@@ -10,18 +10,14 @@ ENTRYPOINT ["python3"]
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
 
 FROM builder as dev-envs
-RUN <<EOF
-apk update
-apk add --no-cache git
-git clone some_address
-xyz this
-this_super_nice_command is_missing
-EOF
+RUN apk update
+RUN apk add --no-cache git
+RUN git clone some_address
+RUN xyz this
+RUN this_super_nice_command is_missing
 
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
+RUN addgroup -S docker
+RUN adduser -S --shell /bin/bash --ingroup docker vscode
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]

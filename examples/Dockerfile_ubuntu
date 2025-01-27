@@ -1,0 +1,23 @@
+# Defective Dockerfile 1: Ubuntu with partial setup
+FROM ubuntu:20.04
+
+# Install some tools but omit critical ones (like curl, git, wget)
+RUN apt-get update && apt-get install -y \
+    nano \
+    software-properties-common && \
+    apt-get install git -y && \
+    echo "Essential tools like wget, git, and curl are intentionally missing!"
+
+# Simulate environment setup
+RUN mkdir -p /app && echo "This is a test application." > /app/test.txt
+
+# Attempt to use missing tools (wget, git, curl)
+# These commands will fail at runtime due to the absence of the binaries
+RUN echo "Attempting to use wget, git, and curl:" && \
+    wget http://example.com -O /app/example.html || echo "wget not found" && \
+    git clone https://github.com/example/repo.git /app/repo || echo "git not found" && \
+    curl -o /app/test.html http://example.com || echo "curl not found"
+
+WORKDIR /app
+
+CMD ["bash"]
