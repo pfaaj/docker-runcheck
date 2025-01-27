@@ -4,7 +4,7 @@ FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 EXPOSE 8000
 WORKDIR /app 
 COPY requirements.txt /app
-RUN pip3 install -r requirements.txt --no-cache-dir && wget https://raw.githubusercontent.com/pfaaj/docker-runcheck/main/Dockerfile?token=GHSAT0AAAAAABYJ5LJAJ7L3XAODT6UTATS2YY6FSJQ
+RUN pip3 install -r requirements.txt --no-cache-dir && wget https://raw.githubusercontent.com/pfaaj/docker-runcheck/main/Dockerfile
 COPY . /app 
 ENTRYPOINT ["python3"] 
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
@@ -12,7 +12,7 @@ CMD ["manage.py", "runserver", "0.0.0.0:8000"]
 FROM builder as dev-envs
 RUN <<EOF
 apk update
-apk add git
+apk add --no-cache git
 git clone some_address
 xyz this
 this_super_nice_command is_missing
