@@ -62,11 +62,11 @@
 
 + docker-runcheck works as follows:
   + looks for a file name Dockerfile in the current working directory
-  + contructs one or more containers based on the mentioned parent image
-  + docker image is downloaded if not present
-  but it is not built.
+  + contructs one or more containers based on the mentioned parent image(s)
+  + parent image is downloaded if not present, but the final Dockerfile
+  image is not built.
   + export image as tar file and compile a list of the available binaries in the image
-  + compile a list of any binaries mentioned in a RUN command that are  missing from the image or are used before being installed by a package manager.
+  + compile a list of any binaries mentioned in a RUN command that are  missing from the image and are used before being installed by a package manager.
 
 </br>
 
